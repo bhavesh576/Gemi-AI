@@ -1,70 +1,34 @@
-# 🤖💬 Gemi AI – Gemini Powered Chatbot
+# GemiAI – Neural Interface 🌌🧠
 
-> Your futuristic AI assistant built with **Google's Gemini Pro API**  
-> Designed to chat, speak, and understand – just like a human 🧠💡  
-> Created by: **Bhavesh Tarale**
+**GemiAI** is a futuristic neural interface web app that blends advanced UI/UX design with AI-inspired interactivity. Designed with a next-gen architecture and animation-driven layout, it’s built to shock, inspire, and feel like it's straight from the future.
 
 ---
 
-![robot](https://media.giphy.com/media/3o7abldj0b3rxrZUxW/giphy.gif)
+## 🚀 Features
+
+- 🧠 **AI-Chat Interface** – Talk to GemiAI like a neural companion
+- 🎨 **Animated Multi-Section UI** – Dashboard, Chat, Flow State & Insights
+- ⏱️ **Productivity Timer** – Focus modes: Hyper Focus, Creative Flow, Learning
+- 🌈 **Neural Particle Background** – Real-time animated canvas
+- 🧬 **AI Mood & Biometrics System** – Simulated heart rate, focus levels, energy stats
+- 🧠 **Digital DNA Insights** – Productivity patterns and neural efficiency
+- 🎤 **Voice Command Support** – Trigger interface sections via voice
+- 🕹️ **Konami Code Easter Egg** – Hidden reality-bending mode 😎
+- 🔥 **Glassy UI + Glowing Themes** – Sleek animations, futuristic colors
 
 ---
 
-## 🧠 What is Gemi AI?
+## 💡 Tech Stack
 
-**Gemi AI** is a futuristic chatbot that uses **Google’s Gemini Pro (Generative Language API)** to simulate natural human conversation.  
-It listens, replies with intelligence, and even speaks back to you. All packed inside a smooth, animated, and responsive web interface.
-
-This is not just a chatbot — this is a step toward the future of **AI companionship and smart assistance**.
-
----
-
-## 🚀 Project Highlights
-
-| 🔹 Feature                 | 🔍 Description |
-|--------------------------|----------------|
-| 🎤 **Voice Input**        | Speak to Gemi using your mic |
-| 🗣️ **Speech Output**     | Gemi talks back to you using voice |
-| ⚙️ **Gemini Pro API**     | Real-time AI responses using Google's model |
-| 🌙 **Dark Mode**         | Toggle between light and dark UI |
-| ⚡ **Quick Reply Buttons**| Instantly ask pre-set common questions |
-| 💡 **Typing Animation**   | See when Gemi is generating a response |
-| 🧩 **Custom Memory**      | Gemi responds with personalized knowledge |
-| 🎨 **Smooth UI**          | Fully responsive and animated interface |
+- **HTML5 + CSS3** (with advanced animations and responsive design)
+- **Vanilla JavaScript (ES6)** – Complete interactive logic and AI simulation
+- **Canvas API** – Custom neural particle animation
+- **Web Speech API** – Voice command handling
+- **Zero dependencies** – Built completely from scratch, no frameworks
 
 ---
 
-## 📸 Interface Preview
+## 📁 Folder Structure
 
-> *Experience Gemi AI's clean and futuristic design:*
-
-![ui-preview](https://media.giphy.com/media/26xBIygOcC3bAWgIo/giphy.gif)
-
----
-
-## 🛠️ Technologies Used
-
-- **HTML5 / CSS3** – For clean layout and styling  
-- **JavaScript (Vanilla)** – For interactivity and API integration  
-- **Google Gemini Pro API** – For generating smart responses  
-- **Web Speech API** – For speech recognition & speech synthesis  
-
----
-
-## 🧬 How It Works
-
-1. User enters a message or uses voice input 🎤  
-2. Gemi sends the input to **Gemini Pro** API  
-3. Gemini generates a smart, conversational response 🤖  
-4. Gemi displays and reads the response out loud  
-5. Quick replies and memory logic provide bonus UX features
-
----
-
-## ⚙️ Setup Instructions
-
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/BhaveshTarale/gemi-ai-chatbot.git
 
 
