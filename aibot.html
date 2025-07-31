@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GemiAI - Neural Interface</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== CORE VARIABLES ===== */
+        :root {
+            --neural-primary: #0066ff;
+            --neural-secondary: #00ffaa;
+            --neural-accent: #ff0066;
+            --neural-dark: #0a0a0f;
+            --neural-light: #f0f0ff;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glow-blue: 0 0 30px rgba(0, 102, 255, 0.5);
+            --glow-green: 0 0 30px rgba(0, 255, 170, 0.5);
+            --font-neural: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* ===== GLOBAL RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-neural);
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            color: var(--neural-light);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ===== NEURAL CANVAS BACKGROUND ===== */
+        #neural-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .gemiai-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== QUANTUM NAVIGATION ===== */
+        .quantum-nav {
+            position: fixed;
+            top: 50%;
+            right: 30px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .nav-orb {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-orb:hover {
+            transform: scale(1.1);
+            box-shadow: var(--glow-blue);
+            background: rgba(0, 102, 255, 0.2);
+        }
+
+        .nav-orb.active {
+            background: rgba(0, 102, 255, 0.3);
+            box-shadow: var(--glow-blue);
+            transform: scale(1.15);
+        }
+
+        .orb-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--neural-primary);
+            animation: orbPulse 2s infinite;
+        }
+
+        @keyframes orbPulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .gemiai-main {
+            flex: 1;
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .gemiai-section {
+            display: none;
+            animation: sectionSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gemiai-section.active {
+            display: block;
+        }
+
+        @keyframes sectionSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== HOLOGRAPHIC HEADER ===== */
+        .holographic-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .neural-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--neural-primary), var(--neural-secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .neural-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neural-primary), transparent);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(240, 240, 255, 0.7);
+            font-weight: 300;
+        }
+
+        /* ===== AI PREDICTION CARDS ===== */
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .ai-card {
+            position: relative;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .ai-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 102, 255, 0.3);
+        }
+
+        .card-aurora {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(0, 102, 255, 0.1),
+                transparent,
+                rgba(0, 255, 170, 0.1),
+                transparent
+            );
+            animation: auroraMove 8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .ai-card:hover .card-aurora {
+            opacity: 1;
+        }
+
+        @keyframes auroraMove {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ai-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .ai-card h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--neural-light);
+        }
+
+        .ai-card p {
+            color: rgba(240, 240, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* ===== CONFIDENCE BAR ===== */
+        .confidence-bar {
+            position: relative;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neural-primary), var(--neural-secondary));
+            border-radius: 2px;
+            transition: width 1s ease;
+        }
+
+        .confidence-bar span {
+            font-size: 0.8rem;
+            color: rgba(240, 240, 255, 0.6);
+        }
+
+        /* ===== MOOD VISUALIZER ===== */
+        .mood-visualizer {
+            height: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mood-wave {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--neural-accent), var(--neural-secondary));
+            border-radius: 20px;
+            animation: moodPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes moodPulse {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1); }
+        }
+
+        /* ===== IDEA PARTICLES ===== */
+        .idea-particles {
+            position: relative;
+            height: 40px;
+        }
+
+        .idea-particles::before,
+        .idea-particles::after {
+            content: '✨';
+            position: absolute;
+            animation: sparkle 2s infinite;
+        }
+
+        .idea-particles::before {
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .idea-particles::after {
+            right: 20%;
+            animation-delay: 1s;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: translateY(20px); }
+            50% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CHAT INTERFACE ===== */
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-avatar {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+        }
+
+        .avatar-core {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neural-primary), var(--neural-secondary));
+            animation: avatarPulse 2s ease-in-out infinite;
+        }
+
+        .avatar-rings {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: calc(100% + 20px);
+            height: calc(100% + 20px);
+            border: 2px solid var(--neural-primary);
+            border-radius: 50%;
+            animation: avatarRotate 8s linear infinite;
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes avatarRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: var(--glass-bg);
+            border-radius: 15px;
+            backdrop-filter: blur(20px);
+        }
+
+        .ai-message {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            animation: messageSlideIn 0.5s ease;
+        }
+
+        .user-message {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-direction: row-reverse;
+            animation: messageSlideIn 0.5s ease;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-orb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neural-primary), var(--neural-secondary));
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .user-message .message-orb {
+            background: linear-gradient(135deg, var(--neural-accent), var(--neural-secondary));
+            margin-left: 15px;
+            margin-right: 0;
+        }
+
+        .ai-message p, .user-message p {
+            background: var(--glass-bg);
+            padding: 15px 20px;
+            border-radius: 20px;
+            max-width: 70%;
+            line-height: 1.6;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        #chat-input {
+            flex: 1;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 15px 25px;
+            color: var(--neural-light);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #chat-input:focus {
+            border-color: var(--neural-primary);
+            box-shadow: var(--glow-blue);
+        }
+
+        #chat-input::placeholder {
+            color: rgba(240, 240, 255, 0.5);
+        }
+
+        .voice-btn, .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--neural-primary), var(--neural-secondary));
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .voice-btn:hover, .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--glow-blue);
+        }
+
+        /* ===== PRODUCTIVITY INTERFACE ===== */
+        .flow-interface {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .time-distortion {
+            text-align: center;
+        }
+
+        .time-distortion h2 {
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: var(--neural-light);
+        }
+
+        .quantum-timer {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 40px;
+        }
+
+        .timer-rings {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .ring {
+            position: absolute;
+            border: 2px solid;
+            border-radius: 50%;
+            animation: ringRotate 10s linear infinite;
+        }
+
+        .ring-1 {
+            width: 100%;
+            height: 100%;
+            border-color: var(--neural-primary);
+        }
+
+        .ring-2 {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-color: var(--neural-secondary);
+            animation-delay: -3s;
+        }
+
+        .ring-3 {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            border-color: var(--neural-accent);
+            animation-delay: -6s;
+        }
+
+        @keyframes ringRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .timer-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: var(--glass-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .timer-display {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--neural-light);
+        }
+
+        .flow-controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .flow-btn {
+            padding: 12px 24px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            color: var(--neural-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+        }
+
+        .flow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-blue);
+            background: rgba(0, 102, 255, 0.2);
+        }
+
+        /* ===== BIOMETRIC PANEL ===== */
+        .biometric-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .bio-metric {
+            background: var(--glass-bg);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .bio-metric span {
+            display: block;
+            font-size: 0.9rem;
+            color: rgba(240, 240, 255, 0.7);
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .unit {
+            font-size: 1rem;
+            color: rgba(240, 240, 255, 0.6);
+        }
+
+        .heartbeat-line {
+            height: 30px;
+            background: linear-gradient(90deg, var(--neural-accent), var(--neural-primary));
+            border-radius: 15px;
+            animation: heartbeat 1.2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1); }
+        }
+
+        .focus-gauge {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .focus-gauge::after {
+            content: '';
+            display: block;
+            width: 87%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--neural-primary), var(--neural-secondary));
+            animation: gaugeMove 2s ease-in-out infinite;
+        }
+
+        @keyframes gaugeMove {
+            0%, 100% { transform: scaleX(0.8); }
+            50% { transform: scaleX(1); }
+        }
+
+        .energy-bars {
+            display: flex;
+            gap: 3px;
+            height: 20px;
+        }
+
+        .energy-bars::before,
+        .energy-bars::after {
+            content: '';
+            flex: 1;
+            background: linear-gradient(0deg, var(--neural-secondary), var(--neural-primary));
+            border-radius: 2px;
+            animation: energyPulse 1.5s ease-in-out infinite alternate;
+        }
+
+        .energy-bars::after {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes energyPulse {
+            from { transform: scaleY(0.5); }
+            to { transform: scaleY(1); }
+        }
+
+        /* ===== INSIGHTS DASHBOARD ===== */
+        .insights-dashboard {
+            text-align: center;
+        }
+
+        .insights-dashboard h2 {
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: var(--neural-light);
+        }
+
+        .dna-helix {
+            position: relative;
+            width: 200px;
+            height: 300px;
+            margin: 0 auto 40px;
+        }
+
+        .helix-strand {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid;
+            border-radius: 50%;
+            animation: helixRotate 6s linear infinite;
+        }
+
+        .strand-1 {
+            border-color: var(--neural-primary);
+            transform: rotateY(0deg);
+        }
+
+        .strand-2 {
+            border-color: var(--neural-secondary);
+            transform: rotateY(60deg);
+            animation-delay: -2s;
+        }
+
+        @keyframes helixRotate {
+            from { transform: rotateY(0deg) rotateX(0deg); }
+            to { transform: rotateY(360deg) rotateX(360deg); }
+        }
+
+        .insight-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .insight-card {
+            background: var(--glass-bg);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .insight-card h3 {
+            margin-bottom: 20px;
+            color: var(--neural-light);
+        }
+
+        .pattern-viz {
+            display: flex;
+            align-items: end;
+            height: 60px;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .pattern-bar {
+            flex: 1;
+            background: linear-gradient(0deg, var(--neural-primary), var(--neural-secondary));
+            border-radius: 4px;
+            animation: barGrow 1.5s ease-out;
+        }
+
+        @keyframes barGrow {
+            from { height: 0; }
+        }
+
+        .emotion-radar {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+        }
+
+        .radar-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--neural-accent);
+            border-radius: 50%;
+            animation: radarPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes radarPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.7; }
+        }
+
+        /* ===== LOADING ANIMATIONS ===== */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--neural-primary);
+            border-radius: 50%;
+            animation: typingBounce 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .quantum-nav {
+                bottom: 20px;
+                top: auto;
+                right: 50%;
+                transform: translateX(50%);
+                flex-direction: row;
+            }
+
+            .gemiai-main {
+                padding: 20px;
+            }
+
+            .prediction-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .flow-interface {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .flow-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .insight-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .neural-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* ===== ACCESSIBILITY ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .glow-effect {
+            box-shadow: var(--glow-blue);
+        }
+
+        .neural-glow {
+            text-shadow: 0 0 20px var(--neural-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Neural Particle Background -->
+    <canvas id="neural-canvas"></canvas>
+    
+    <!-- Main Interface Container -->
+    <div class="gemiai-container">
+        <!-- Floating Navigation -->
+        <nav class="quantum-nav">
+            <div class="nav-orb active" data-section="dashboard">
+                <div class="orb-pulse"></div>
+                <span>Mind</span>
+            </div>
+            <div class="nav-orb" data-section="ai-chat">
+                <div class="orb-pulse"></div>
+                <span>Chat</span>
+            </div>
+            <div class="nav-orb" data-section="productivity">
+                <div class="orb-pulse"></div>
+                <span>Flow</span>
+            </div>
+            <div class="nav-orb" data-section="insights">
+                <div class="orb-pulse"></div>
+                <span>Vision</span>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="gemiai-main">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="gemiai-section active">
+                <div class="holographic-header">
+                    <h1 class="neural-title">Welcome to GemiAI</h1>
+                    <p class="subtitle">Your Advanced Neural Interface is Now Active</p>
+                </div>
+
+                <!-- Predictive Cards -->
+                <div class="prediction-grid">
+                    <div class="ai-card" data-predict="focus-session">
+                        <div class="card-aurora"></div>
+                        <div class="card-content">
+                            <div class="ai-icon">🧠</div>
+                            <h3>Deep Focus Mode</h3>
+                            <p>Optimal concentration window detected in 12 minutes</p>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: 94%"></div>
+                                <span>94% confidence</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-card" data-predict="mood-boost">
+                        <div class="card-aurora"></div>
+                        <div class="card-content">
+                            <div class="ai-icon">✨</div>
+                            <h3>Mood Enhancement</h3>
+                            <p>Stress patterns detected. Initiating wellness protocol</p>
+                            <div class="mood-visualizer">
+                                <div class="mood-wave"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-card" data-predict="creative-burst">
+                        <div class="card-aurora"></div>
+                        <div class="card-content">
+                            <div class="ai-icon">🎨</div>
+                            <h3>Creative Breakthrough</h3>
+                            <p>Innovation patterns emerging. Breakthrough imminent</p>
+                            <div class="idea-particles"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Chat Interface -->
+            <section id="ai-chat" class="gemiai-section">
+                <div class="chat-container">
+                    <div class="ai-avatar">
+                        <div class="avatar-core"></div>
+                        <div class="avatar-rings"></div>
+                    </div>
+                    
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="ai-message">
+                            <div class="message-orb"></div>
+                            <p>Hello! I'm GemiAI, your neural interface companion. How can I enhance your digital experience today?</p>
+                        </div>
+                    </div>
+
+                    <div class="typing-indicator" id="typing-indicator">
+                        <div class="message-orb"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+
+                    <div class="chat-input-container">
+                        <input type="text" id="chat-input" placeholder="Share your thoughts with GemiAI...">
+                        <button id="voice-input" class="voice-btn">🎤</button>
+                        <button id="send-btn" class="send-btn">⚡</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Productivity Flow -->
+            <section id="productivity" class="gemiai-section">
+                <div class="flow-interface">
+                    <div class="time-distortion">
+                        <h2>Enter the Flow State</h2>
+                        <div class="quantum-timer">
+                            <div class="timer-rings">
+                                <div class="ring ring-1"></div>
+                                <div class="ring ring-2"></div>
+                                <div class="ring ring-3"></div>
+                            </div>
+                            <div class="timer-core">
+                                <span class="timer-display" id="timer-display">25:00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-controls">
+                            <button class="flow-btn" data-mode="focus">🎯 Hyper Focus</button>
+                            <button class="flow-btn" data-mode="creative">🌌 Creative Flow</button>
+                            <button class="flow-btn" data-mode="learning">📚 Learning Mode</button>
+                        </div>
+                    </div>
+
+                    <div class="biometric-panel">
+                        <div class="bio-metric">
+                            <span>Neural Activity</span>
+                            <div class="metric-value">72 <span class="unit">Hz</span></div>
+                            <div class="heartbeat-line"></div>
+                        </div>
+                        <div class="bio-metric">
+                            <span>Focus Level</span>
+                            <div class="metric-value">87 <span class="unit">%</span></div>
+                            <div class="focus-gauge"></div>
+                        </div>
+                        <div class="bio-metric">
+                            <span>Energy</span>
+                            <div class="metric-value">92 <span class="unit">%</span></div>
+                            <div class="energy-bars"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Insights -->
+            <section id="insights" class="gemiai-section">
+                <div class="insights-dashboard">
+                    <h2>Your Digital Neural Map</h2>
+                    
+                    <div class="dna-helix">
+                        <div class="helix-strand strand-1"></div>
+                        <div class="helix-strand strand-2"></div>
+                    </div>
+
+                    <div class="insight-cards">
+                        <div class="insight-card">
+                            <h3>Productivity Patterns</h3>
+                            <div class="pattern-viz">
+                                <div class="pattern-bar" style="height: 20%"></div>
+                                <div class="pattern-bar" style="height: 60%"></div>
+                                <div class="pattern-bar" style="height: 90%"></div>
+                                <div class="pattern-bar" style="height: 70%"></div>
+                                <div class="pattern-bar" style="height: 40%"></div>
+                            </div>
+                            <p>Peak performance: 2:30 PM - 4:45 PM</p>
+                        </div>
+
+                        <div class="insight-card">
+                            <h3>Neural Efficiency</h3>
+                            <div class="emotion-radar">
+                                <div class="radar-point" style="top: 20%; left: 60%"></div>
+                                <div class="radar-point" style="top: 40%; left: 80%"></div>
+                                <div class="radar-point" style="top: 70%; left: 30%"></div>
+                            </div>
+                            <p>Cognitive balance: Optimized</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // ===== GEMIAI CORE SYSTEM =====
+        class GemiAI {
+            constructor() {
+                this.currentSection = 'dashboard';
+                this.isTimerRunning = false;
+                this.timerDuration = 25 * 60; // 25 minutes in seconds
+                this.currentTime = this.timerDuration;
+                this.timerInterval = null;
+                this.particles = [];
+                this.init();
+            }
+
+            init() {
+                this.setupNavigation();
+                this.setupChat();
+                this.setupTimer();
+                this.setupParticleSystem();
+                this.startNeuralAnimations();
+                this.displayWelcomeMessage();
+            }
+
+            // ===== NAVIGATION SYSTEM =====
+            setupNavigation() {
+                const navOrbs = document.querySelectorAll('.nav-orb');
+                
+                navOrbs.forEach(orb => {
+                    orb.addEventListener('click', (e) => {
+                        const targetSection = e.currentTarget.dataset.section;
+                        this.switchSection(targetSection);
+                    });
+                });
+            }
+
+            switchSection(sectionId) {
+                // Remove active class from all sections and nav orbs
+                document.querySelectorAll('.gemiai-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.querySelectorAll('.nav-orb').forEach(orb => {
+                    orb.classList.remove('active');
+                });
+
+                // Add active class to target section and nav orb
+                document.getElementById(sectionId).classList.add('active');
+                document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+                
+                this.currentSection = sectionId;
+                this.triggerSectionAnimation(sectionId);
+            }
+
+            triggerSectionAnimation(sectionId) {
+                const section = document.getElementById(sectionId);
+                section.style.animation = 'none';
+                section.offsetHeight; // Trigger reflow
+                section.style.animation = 'sectionSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            }
+
+            // ===== CHAT SYSTEM =====
+            setupChat() {
+                const chatInput = document.getElementById('chat-input');
+                const sendBtn = document.getElementById('send-btn');
+                const voiceBtn = document.getElementById('voice-input');
+
+                sendBtn.addEventListener('click', () => this.sendMessage());
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendMessage();
+                });
+                voiceBtn.addEventListener('click', () => this.toggleVoiceInput());
+
+                // Auto-resize chat input
+                chatInput.addEventListener('input', this.autoResizeInput);
+            }
+
+            async sendMessage() {
+                const chatInput = document.getElementById('chat-input');
+                const message = chatInput.value.trim();
+                
+                if (!message) return;
+
+                this.addUserMessage(message);
+                chatInput.value = '';
+                
+                this.showTypingIndicator();
+                
+                // Simulate AI response delay
+                setTimeout(() => {
+                    this.hideTypingIndicator();
+                    const response = this.generateAIResponse(message);
+                    this.addAIMessage(response);
+                }, 1500 + Math.random() * 1000);
+            }
+
+            addUserMessage(message) {
+                const chatMessages = document.getElementById('chat-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'user-message';
+                messageDiv.innerHTML = `
+                    <div class="message-orb"></div>
+                    <p>${message}</p>
+                `;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            addAIMessage(message) {
+                const chatMessages = document.getElementById('chat-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'ai-message';
+                messageDiv.innerHTML = `
+                    <div class="message-orb"></div>
+                    <p>${message}</p>
+                `;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            showTypingIndicator() {
+                document.getElementById('typing-indicator').classList.add('active');
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            hideTypingIndicator() {
+                document.getElementById('typing-indicator').classList.remove('active');
+            }
+
+            generateAIResponse(userMessage) {
+                const responses = [
+                    "I'm analyzing the neural patterns in your message. Fascinating perspective! 🧠",
+                    "Your cognitive signature suggests you're in a creative state. Let's explore this further. ✨",
+                    "I'm detecting elevated focus frequencies. This is an optimal moment for deep work. 🎯",
+                    "Based on your digital DNA, I recommend a 15-minute meditation session. 🌸",
+                    "Your neural pathways are firing in an interesting pattern. Tell me more about your thoughts. 🌌",
+                    "I sense innovation brewing in your synapses. Something groundbreaking is forming. 🚀",
+                    "Your biometric data suggests peak performance window approaching. Ready to maximize it? ⚡",
+                    "Fascinating! Your thought patterns align with breakthrough inventors of the past. 🎨"
+                ];
+                
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+
+            toggleVoiceInput() {
+                const voiceBtn = document.getElementById('voice-input');
+                voiceBtn.style.background = 'linear-gradient(135deg, #ff0066, #00ffaa)';
+                
+                // Simulate voice input
+                setTimeout(() => {
+                    voiceBtn.style.background = 'linear-gradient(135deg, var(--neural-primary), var(--neural-secondary))';
+                    document.getElementById('chat-input').value = "Voice input detected...";
+                }, 2000);
+            }
+
+            // ===== PRODUCTIVITY TIMER =====
+            setupTimer() {
+                const flowBtns = document.querySelectorAll('.flow-btn');
+                
+                flowBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const mode = e.target.dataset.mode;
+                        this.startFlowSession(mode);
+                    });
+                });
+            }
+
+            startFlowSession(mode) {
+                if (this.isTimerRunning) {
+                    this.stopTimer();
+                }
+
+                const durations = {
+                    focus: 25 * 60,     // 25 minutes
+                    creative: 45 * 60,  // 45 minutes
+                    learning: 30 * 60   // 30 minutes
+                };
+
+                this.currentTime = durations[mode];
+                this.timerDuration = durations[mode];
+                this.isTimerRunning = true;
+                
+                this.updateTimerDisplay();
+                this.startTimer();
+                this.showFlowModeMessage(mode);
+            }
+
+            startTimer() {
+                this.timerInterval = setInterval(() => {
+                    this.currentTime--;
+                    this.updateTimerDisplay();
+                    
+                    if (this.currentTime <= 0) {
+                        this.stopTimer();
+                        this.showFlowCompleteMessage();
+                    }
+                }, 1000);
+            }
+
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+                this.isTimerRunning = false;
+            }
+
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.currentTime / 60);
+                const seconds = this.currentTime % 60;
+                const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                document.getElementById('timer-display').textContent = display;
+            }
+
+            showFlowModeMessage(mode) {
+                const messages = {
+                    focus: "🧠 Entering Hyper Focus Mode. Neural pathways optimizing...",
+                    creative: "🌌 Creative Flow State Activated. Innovation channels opening...",
+                    learning: "📚 Learning Mode Engaged. Knowledge absorption enhanced..."
+                };
+                
+                this.showNotification(messages[mode]);
+            }
+
+            showFlowCompleteMessage() {
+                this.showNotification("✨ Flow session complete! Your neural efficiency has increased by 23%");
+            }
+
+            // ===== PARTICLE SYSTEM =====
+            setupParticleSystem() {
+                this.canvas = document.getElementById('neural-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.resizeCanvas();
+                this.createParticles();
+                this.animateParticles();
+
+                window.addEventListener('resize', () => this.resizeCanvas());
+                document.addEventListener('mousemove', (e) => this.onMouseMove(e));
+            }
+
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            createParticles() {
+                const particleCount = 50;
+                this.particles = [];
+
+                for (let i = 0; i < particleCount; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        size: Math.random() * 2 + 1,
+                        alpha: Math.random() * 0.5 + 0.2,
+                        hue: Math.random() * 60 + 200 // Blue to cyan range
+                    });
+                }
+            }
+
+            animateParticles() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.particles.forEach(particle => {
+                    // Update position
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    
+                    // Wrap around edges
+                    if (particle.x > this.canvas.width) particle.x = 0;
+                    if (particle.x < 0) particle.x = this.canvas.width;
+                    if (particle.y > this.canvas.height) particle.y = 0;
+                    if (particle.y < 0) particle.y = this.canvas.height;
+                    
+                    // Draw particle
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `hsla(${particle.hue}, 70%, 60%, ${particle.alpha})`;
+                    this.ctx.fill();
+                });
+                
+                // Draw connections
+                this.drawConnections();
+                
+                requestAnimationFrame(() => this.animateParticles());
+            }
+
+            drawConnections() {
+                const maxDistance = 100;
+                
+                for (let i = 0; i < this.particles.length; i++) {
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const dx = this.particles[i].x - this.particles[j].x;
+                        const dy = this.particles[i].y - this.particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < maxDistance) {
+                            const alpha = (1 - distance / maxDistance) * 0.2;
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                            this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+                            this.ctx.strokeStyle = `rgba(0, 102, 255, ${alpha})`;
+                            this.ctx.lineWidth = 1;
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            onMouseMove(e) {
+                const mouseInfluence = 100;
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+                
+                this.particles.forEach(particle => {
+                    const dx = particle.x - mouseX;
+                    const dy = particle.y - mouseY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < mouseInfluence) {
+                        const force = (mouseInfluence - distance) / mouseInfluence * 0.01;
+                        particle.vx += dx * force;
+                        particle.vy += dy * force;
+                    }
+                });
+            }
+
+            // ===== NEURAL ANIMATIONS =====
+            startNeuralAnimations() {
+                this.animateCards();
+                this.animateBiometrics();
+                this.animateInsights();
+            }
+
+            animateCards() {
+                const cards = document.querySelectorAll('.ai-card');
+                
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(30px)';
+                        card.style.transition = 'all 0.6s ease';
+                        
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 100);
+                    }, index * 200);
+                });
+            }
+
+            animateBiometrics() {
+                // Simulate real-time biometric updates
+                setInterval(() => {
+                    const heartRate = 70 + Math.random() * 10;
+                    const focusLevel = 85 + Math.random() * 10;
+                    const energy = 90 + Math.random() * 8;
+                    
+                    const metrics = document.querySelectorAll('.metric-value');
+                    if (metrics[0]) metrics[0].innerHTML = `${Math.round(heartRate)} <span class="unit">Hz</span>`;
+                    if (metrics[1]) metrics[1].innerHTML = `${Math.round(focusLevel)} <span class="unit">%</span>`;
+                    if (metrics[2]) metrics[2].innerHTML = `${Math.round(energy)} <span class="unit">%</span>`;
+                }, 3000);
+            }
+
+            animateInsights() {
+                // Animate pattern bars on insights page
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const bars = entry.target.querySelectorAll('.pattern-bar');
+                            bars.forEach((bar, index) => {
+                                setTimeout(() => {
+                                    bar.style.animation = 'barGrow 1.5s ease-out';
+                                }, index * 100);
+                            });
+                        }
+                    });
+                });
+
+                const patternViz = document.querySelector('.pattern-viz');
+                if (patternViz) observer.observe(patternViz);
+            }
+
+            // ===== UTILITY FUNCTIONS =====
+            showNotification(message) {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 30px;
+                    right: 30px;
+                    background: var(--glass-bg);
+                    backdrop-filter: blur(20px);
+                    border: 1px solid var(--glass-border);
+                    padding: 15px 25px;
+                    border-radius: 10px;
+                    color: var(--neural-light);
+                    z-index: 10000;
+                    animation: slideInRight 0.5s ease;
+                `;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.animation = 'slideOutRight 0.5s ease';
+                    setTimeout(() => notification.remove(), 500);
+                }, 3000);
+            }
+
+            displayWelcomeMessage() {
+                setTimeout(() => {
+                    this.showNotification("🚀 GemiAI Neural Interface Activated - All systems operational");
+                }, 1000);
+            }
+
+            autoResizeInput(e) {
+                e.target.style.height = 'auto';
+                e.target.style.height = e.target.scrollHeight + 'px';
+            }
+        }
+
+        // ===== INITIALIZE GEMIAI =====
+        document.addEventListener('DOMContentLoaded', () => {
+            window.gemiAI = new GemiAI();
+            
+            // Add slide animations for notifications
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInRight {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOutRight {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+
+        // ===== EASTER EGGS & ADVANCED FEATURES =====
+        
+        // Konami Code activation
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.code);
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
+            }
+            
+            if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
+                activateSecretMode();
+                konamiCode = [];
+            }
+        });
+
+        function activateSecretMode() {
+            document.body.style.filter = 'hue-rotate(180deg)';
+            window.gemiAI.showNotification("🌈 Secret Neural Frequency Unlocked! Reality distortion mode activated.");
+            
+            setTimeout(() => {
+                document.body.style.filter = 'none';
+                window.gemiAI.showNotification("🔄 Reality frequency restored to baseline.");
+            }, 10000);
+        }
+
+        // Voice commands (basic simulation)
+        if ('webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.shiftKey && e.key === 'V') {
+                    recognition.start();
+                    window.gemiAI.showNotification("🎤 Voice command activated - Speak now...");
+                }
+            });
+
+            recognition.onresult = (event) => {
+                const command = event.results[0][0].transcript.toLowerCase();
+                processVoiceCommand(command);
+            };
+        }
+
+        function processVoiceCommand(command) {
+            if (command.includes('dashboard') || command.includes('home')) {
+                window.gemiAI.switchSection('dashboard');
+            } else if (command.includes('chat') || command.includes('talk')) {
+                window.gemiAI.switchSection('ai-chat');
+            } else if (command.includes('focus') || command.includes('productivity')) {
+                window.gemiAI.switchSection('productivity');
+            } else if (command.includes('insights') || command.includes('vision')) {
+                window.gemiAI.switchSection('insights');
+            } else {
+                window.gemiAI.showNotification(`🤖 Command received: "${command}" - Processing neural interpretation...`);
+            }
+        }
+    </script>
+</body>
+</html>
